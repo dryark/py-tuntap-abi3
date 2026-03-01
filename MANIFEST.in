@@ -1,0 +1,9 @@
+include FC_LICENSE
+include README.md
+include pyproject.toml
+include setup.py
+
+recursive-include py_tuntap_abi3 *.py
+recursive-include src/native *.c *.h
+
+prune .cursor

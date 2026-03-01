@@ -1,0 +1,15 @@
+build/
+dist/
+*.egg-info/
+MANIFEST
+
+__pycache__/
+*.pyc
+
+*.o
+*.so
+
+py_tuntap_abi3/_version.py
+py_tuntap_abi3/wintun/bin/*/wintun.dll
+
+.cursor/

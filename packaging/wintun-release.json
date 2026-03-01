@@ -1,0 +1,18 @@
+{
+  "repo": "dryark/wintun",
+  "tag": "v0.14.1-dryark.10",
+  "assets": {
+    "amd64": {
+      "filename": "wintun-amd64.dll",
+      "sha256": "b442010879b09e17ee36eb9bddd02164754ff74f307d83196be5ac1d92d72545"
+    },
+    "arm64": {
+      "filename": "wintun-arm64.dll",
+      "sha256": "116e1692056013c3636570642530f2372cc71f94bdce1f1842a89713c9aa2e9a"
+    },
+    "x86": {
+      "filename": "wintun-x86.dll",
+      "sha256": "8e9448dc190cfc0404b343cdbec9f04192ba47f0f427832388d637badb7c7df2"
+    }
+  }
+}
