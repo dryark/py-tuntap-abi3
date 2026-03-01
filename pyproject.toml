@@ -1,6 +1,6 @@
 [project]
 name = "py-tuntap-abi3"
-description = "python-pytun fork with darwin and windows support (IPv6-ONLY)"
+description = "Native CPython abi3 TUN/TAP extension for Linux, macOS, and Windows"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "FC_LICENSE" }

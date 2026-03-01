@@ -6,8 +6,8 @@ Native CPython `abi3` TUN/TAP extension for Linux, macOS, and Windows.
 
 - Built as platform-specific wheels with CPython limited ABI (`cp38-abi3`).
 - Linux/macOS wheels contain only native extension artifacts for those platforms.
-- Windows wheels contain the native extension plus one matching-arch `wintun.dll`.
-- `wintun.dll` payloads are not committed to this repository.
+- Windows wheels contain the native extension plus one matching-arch `drywintun.dll`.
+- `drywintun.dll` payloads are not committed to this repository.
 
 ## Wintun release sourcing
 

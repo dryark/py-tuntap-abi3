@@ -1,7 +1,6 @@
 build/
 dist/
 *.egg-info/
-MANIFEST
 
 __pycache__/
 *.pyc
@@ -10,6 +9,6 @@ __pycache__/
 *.so
 
 py_tuntap_abi3/_version.py
-py_tuntap_abi3/wintun/bin/*/wintun.dll
+py_tuntap_abi3/wintun/bin/*/drywintun.dll
 
 .cursor/

@@ -89,7 +89,7 @@ def file_sha256(path: Path) -> str:
 def stage_asset(downloaded: Path, output_root: Path, arch: str) -> Path:
     dest_dir = output_root / arch
     dest_dir.mkdir(parents=True, exist_ok=True)
-    dest_file = dest_dir / "wintun.dll"
+    dest_file = dest_dir / "drywintun.dll"
     shutil.copy2(downloaded, dest_file)
     return dest_file
 

@@ -46,7 +46,7 @@ static int load_wintun_api(TunTapDeviceObject *self) {
     if (self->wintun_module != NULL) {
         return 1;
     }
-    self->wintun_module = LoadLibraryW(L"wintun.dll");
+    self->wintun_module = LoadLibraryW(L"drywintun.dll");
     if (self->wintun_module == NULL) {
         return 0;
     }
@@ -88,7 +88,7 @@ int pytun_backend_init(TunTapDeviceObject *self, PyObject *args, PyObject *kwarg
     }
 
     if (!load_wintun_api(self)) {
-        PyErr_SetString(PyExc_ImportError, "failed to load wintun.dll; ensure DLL directory is configured");
+        PyErr_SetString(PyExc_ImportError, "failed to load drywintun.dll; ensure DLL directory is configured");
         return -1;
     }
 

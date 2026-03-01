@@ -45,7 +45,7 @@ def _windows_package_data() -> list[str]:
         # Optional override/fallback for non-standard build environments.
         arch = os.environ.get("PYTUN_WINTUN_ARCH") or platform.machine()
     normalized = _normalize_windows_arch(arch)
-    rel_path = f"wintun/bin/{normalized}/wintun.dll"
+    rel_path = f"wintun/bin/{normalized}/drywintun.dll"
     absolute = os.path.join(os.path.dirname(__file__), "py_tuntap_abi3", rel_path)
     if not os.path.exists(absolute):
         raise RuntimeError(
