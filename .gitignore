@@ -10,5 +10,8 @@ __pycache__/
 
 py_tuntap_abi3/_version.py
 py_tuntap_abi3/wintun/bin/*/drywintun.dll
+py_tuntap_abi3/wintun/bin/*/drywintun.sys
+py_tuntap_abi3/wintun/bin/*/drywintun.inf
+py_tuntap_abi3/wintun/bin/*/drywintun.cat
 
 .cursor/

@@ -12,6 +12,7 @@ import shutil
 import sys
 import tempfile
 import urllib.request
+import zipfile
 from pathlib import Path
 
 HEX64_RE = re.compile(r"^[0-9a-fA-F]{64}$")
@@ -38,7 +39,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-root",
         default="py_tuntap_abi3/wintun/bin",
-        help="Destination root directory for staged DLLs.",
+        help="Destination root directory for staged DLL and sidecar driver files.",
     )
     return parser.parse_args()
 
@@ -86,12 +87,52 @@ def file_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def stage_asset(downloaded: Path, output_root: Path, arch: str) -> Path:
+def extract_bundle(downloaded_zip: Path, output_root: Path, arch: str) -> Path:
+    bundle_members = {
+        "amd64": {
+            "dll": "drywintun-amd64.dll",
+            "sys": "DRYWINTUN-AMD64.sys",
+            "inf": "DRYWINTUN-AMD64.inf",
+            "cat": "DRYWINTUN-AMD64.cat",
+        },
+        "arm64": {
+            "dll": "drywintun-arm64.dll",
+            "sys": "DRYWINTUN-ARM64.sys",
+            "inf": "DRYWINTUN-ARM64.inf",
+            "cat": "DRYWINTUN-ARM64.cat",
+        },
+        "x86": {
+            "dll": "drywintun-x86.dll",
+            "sys": "DRYWINTUN-X86.sys",
+            "inf": "DRYWINTUN-X86.inf",
+            "cat": "DRYWINTUN-X86.cat",
+        },
+    }
+    member_map = bundle_members.get(arch)
+    if member_map is None:
+        fail(f"unsupported arch for bundle extraction: {arch}")
+
     dest_dir = output_root / arch
     dest_dir.mkdir(parents=True, exist_ok=True)
-    dest_file = dest_dir / "drywintun.dll"
-    shutil.copy2(downloaded, dest_file)
-    return dest_file
+
+    dest_paths = {
+        "dll": dest_dir / "drywintun.dll",
+        "sys": dest_dir / "drywintun.sys",
+        "inf": dest_dir / "drywintun.inf",
+        "cat": dest_dir / "drywintun.cat",
+    }
+
+    with zipfile.ZipFile(downloaded_zip, "r") as zf:
+        names = set(zf.namelist())
+        for kind, src_name in member_map.items():
+            if src_name not in names:
+                fail(
+                    f"bundle {downloaded_zip.name} missing expected member for {arch}: "
+                    f"{src_name}"
+                )
+            with zf.open(src_name, "r") as src, dest_paths[kind].open("wb") as dst:
+                shutil.copyfileobj(src, dst)
+    return dest_paths["dll"]
 
 
 def main() -> int:
@@ -131,8 +172,11 @@ def main() -> int:
                 fail(
                     f"SHA256 mismatch for {filename}: expected {expected}, got {actual}"
                 )
-            staged = stage_asset(downloaded, output_root, arch)
-            print(f"staged {arch} -> {staged}")
+            staged = extract_bundle(downloaded, output_root, arch)
+            print(
+                f"staged {arch} -> {staged.parent}"
+                " (drywintun.dll + drywintun.{sys,inf,cat})"
+            )
 
     return 0
 
