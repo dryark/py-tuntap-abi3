@@ -15,3 +15,5 @@ py_tuntap_abi3/wintun/bin/*/drywintun.inf
 py_tuntap_abi3/wintun/bin/*/drywintun.cat
 
 .cursor/
+.venv-test/
+scripts/run_linux_tunnel_tests_remote.sh

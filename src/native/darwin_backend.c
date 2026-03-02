@@ -63,6 +63,10 @@ static int run_ifconfig(const char *ifname, const char *arg1, const char *arg2, 
     return system(cmd);
 }
 
+static int is_link_local_v6(const struct in6_addr *addr) {
+    return addr->s6_addr[0] == 0xfe && (addr->s6_addr[1] & 0xc0) == 0x80;
+}
+
 int pytun_backend_init(TunTapDeviceObject *self, PyObject *args, PyObject *kwargs) {
     int preferred_num = -1;
     static char *kwlist[] = {"preferred_num", NULL};
@@ -257,6 +261,8 @@ PyObject *pytun_backend_get_addr(TunTapDeviceObject *self, void *closure) {
         return NULL;
     }
 
+    char fallback[INET6_ADDRSTRLEN] = {0};
+    int have_fallback = 0;
     for (struct ifaddrs *cur = ifa; cur != NULL; cur = cur->ifa_next) {
         if (cur->ifa_addr == NULL || cur->ifa_addr->sa_family != AF_INET6) {
             continue;
@@ -266,12 +272,22 @@ PyObject *pytun_backend_get_addr(TunTapDeviceObject *self, void *closure) {
         }
         char out[INET6_ADDRSTRLEN];
         struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)cur->ifa_addr;
-        if (inet_ntop(AF_INET6, &sin6->sin6_addr, out, sizeof(out)) != NULL) {
+        if (inet_ntop(AF_INET6, &sin6->sin6_addr, out, sizeof(out)) == NULL) {
+            continue;
+        }
+        if (!is_link_local_v6(&sin6->sin6_addr)) {
             freeifaddrs(ifa);
             return PyUnicode_FromString(out);
         }
+        if (!have_fallback) {
+            strlcpy(fallback, out, sizeof(fallback));
+            have_fallback = 1;
+        }
     }
     freeifaddrs(ifa);
+    if (have_fallback) {
+        return PyUnicode_FromString(fallback);
+    }
     Py_RETURN_NONE;
 }
 
