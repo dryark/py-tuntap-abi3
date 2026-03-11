@@ -161,7 +161,11 @@ PyObject *pytun_backend_read(TunTapDeviceObject *self, PyObject *args, PyObject 
     if (buf == NULL) {
         return PyErr_NoMemory();
     }
-    ssize_t n = read(self->fd, buf, (size_t)size);
+    int fd = self->fd;
+    ssize_t n;
+    Py_BEGIN_ALLOW_THREADS
+    n = read(fd, buf, (size_t)size);
+    Py_END_ALLOW_THREADS
     if (n < 0) {
         int err = errno;
         PyMem_Free(buf);
@@ -183,7 +187,11 @@ PyObject *pytun_backend_write(TunTapDeviceObject *self, PyObject *args) {
     if (!ensure_open(self)) {
         return NULL;
     }
-    ssize_t n = write(self->fd, buf, (size_t)size);
+    int fd = self->fd;
+    ssize_t n;
+    Py_BEGIN_ALLOW_THREADS
+    n = write(fd, buf, (size_t)size);
+    Py_END_ALLOW_THREADS
     if (n < 0) {
         PyErr_SetFromErrno(PyExc_OSError);
         return NULL;
